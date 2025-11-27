@@ -2,17 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'package:provider/provider.dart';
-
-import 'providers/auth_provider.dart';
-import 'providers/user_provider.dart';
-import 'providers/project_provider.dart';
-
+// Import de la première vue (Login)
 import 'views/auth/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialisation de Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -25,20 +21,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ProjectProvider()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Gestion des Projets',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const LoginPage(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Gestion des Projets - MVC",
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+
+      // Page d’accueil = Login
+      home: const LoginPage(),
     );
   }
 }

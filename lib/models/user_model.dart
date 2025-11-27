@@ -11,7 +11,7 @@ class UserModel {
     required this.role,
   });
 
-  // تحويل من Firestore → Object
+  //  Firestore → Object
   factory UserModel.fromMap(Map<String, dynamic> data, String id) {
     return UserModel(
       id: id,
@@ -21,7 +21,7 @@ class UserModel {
     );
   }
 
-  // تحويل من Object → Firestore
+  //  Object → Firestore
   Map<String, dynamic> toMap() {
     return {
       'nom': nom,

@@ -21,8 +21,7 @@ dependencies:
   # Cloud Firestore
   cloud_firestore: ^5.4.1
 
-  # Provider 
-  provider: ^6.1.2
+ 
 
  #UI
   google_fonts: ^6.2.0

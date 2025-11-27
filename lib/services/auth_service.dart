@@ -1,51 +1,49 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/user_model.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  //auth
-  Future<User?> login(String email, String password) async {
-    try {
-      UserCredential cred = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return cred.user;
-    } catch (e) {
-      print("Erreur login: $e");
-      rethrow;
-    }
+  // Connexion utilisateur
+  Future<UserModel> login(String email, String password) async {
+    UserCredential result = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    String uid = result.user!.uid;
+
+    // Récupérer les informations utilisateur depuis Firestore
+    DocumentSnapshot doc = await _db.collection('users').doc(uid).get();
+
+    return UserModel.fromMap(doc.data() as Map<String, dynamic>, uid);
   }
 
-  // cration compte
-  Future<User?> register(String email, String password, String nom) async {
-    try {
-      UserCredential cred = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  // Inscription utilisateur
+  Future<UserModel> register(String nom, String email, String password) async {
+    UserCredential result = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      //  Firestore
-      await _db.collection("users").doc(cred.user!.uid).set({
-        "nom": nom,
-        "email": email,
-        "role": "membre",
-      });
+    String uid = result.user!.uid;
 
-      return cred.user;
-    } catch (e) {
-      print("Erreur register: $e");
-      rethrow;
-    }
+    UserModel user = UserModel(
+      id: uid,
+      nom: nom,
+      email: email,
+      role: "membre",
+    );
+
+    await _db.collection('users').doc(uid).set(user.toMap());
+
+    return user;
   }
 
-  //logout
+  // Déconnexion
   Future<void> logout() async {
     await _auth.signOut();
   }
-
-  
-  User? get currentUser => _auth.currentUser;
 }
